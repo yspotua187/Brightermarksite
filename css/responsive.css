@@ -1,0 +1,295 @@
+/* Brighter Mark Enterprises LLC - Responsive Styles */
+/* Mobile-first responsive design */
+
+/* Mobile Styles (320px - 767px) */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .section {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  /* Navigation */
+  .nav-menu {
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: white;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-lg);
+    transition: left 0.3s ease;
+    box-shadow: var(--shadow);
+  }
+  
+  .nav-menu.active {
+    left: 0;
+  }
+  
+  .mobile-toggle {
+    display: block;
+  }
+  
+  .nav-link {
+    font-size: 1.2rem;
+    padding: var(--spacing-sm) 0;
+  }
+  
+  /* Hero Section */
+  .hero {
+    padding: 100px 0 60px;
+    min-height: 400px;
+  }
+  
+  .hero h1 {
+    font-size: 2rem;
+  }
+  
+  .hero p {
+    font-size: 1rem;
+  }
+  
+  .hero-cta {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero-cta .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  /* Typography */
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  /* Services Grid */
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .service-card {
+    padding: var(--spacing-md);
+  }
+  
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .feature {
+    padding: var(--spacing-sm);
+  }
+  
+  /* Footer */
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+  
+  /* Contact Form */
+  .contact-form {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+/* Tablet Styles (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  /* Hero Section */
+  .hero {
+    min-height: 500px;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  /* Services Grid */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Navigation */
+  .nav-menu {
+    gap: var(--spacing-sm);
+  }
+  
+  .nav-link {
+    font-size: 0.9rem;
+  }
+}
+
+/* Desktop Styles (1024px+) */
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+  
+  /* Hero Section */
+  .hero {
+    padding: 140px 0 100px;
+    min-height: 600px;
+  }
+  
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+  
+  .hero p {
+    font-size: 1.3rem;
+  }
+  
+  /* Services Grid */
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Features Grid */
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  /* Navigation */
+  .nav-menu {
+    gap: var(--spacing-lg);
+  }
+}
+
+/* Large Desktop Styles (1200px+) */
+@media (min-width: 1200px) {
+  .hero h1 {
+    font-size: 4rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .header,
+  .footer,
+  .btn {
+    display: none;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+  
+  .section {
+    padding: 1rem 0;
+    page-break-inside: avoid;
+  }
+}
+
+/* High DPI Screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Add high-resolution image styles here when images are added */
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  /* Keep light theme as primary, but add dark mode considerations */
+  body {
+    background-color: var(--background-white);
+    color: var(--text-dark);
+  }
+}
+
+/* Landscape Mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+  .hero {
+    padding: 80px 0 40px;
+    min-height: 300px;
+  }
+  
+  .nav-menu {
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
+}
+
+/* Very Small Screens */
+@media (max-width: 320px) {
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+  
+  .hero {
+    min-height: 350px;
+  }
+  
+  .hero h1 {
+    font-size: 1.75rem;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover {
+    transform: none;
+  }
+  
+  .service-card:hover {
+    transform: none;
+  }
+  
+  .nav-link:hover {
+    color: inherit;
+  }
+}
+
+/* Loading States */
+@media (prefers-reduced-data: reduce) {
+  /* Optimize for slow connections */
+  * {
+    background-image: none !important;
+  }
+}
