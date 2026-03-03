@@ -5,7 +5,7 @@
 const API_CONFIG = {
     // Google Apps Script Web App URL - Replace with your deployed script URL
     // Example: 'https://script.google.com/macros/s/ABC123xyz/exec'
-    ENDPOINT: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+    ENDPOINT: 'https://script.google.com/macros/s/AKfycbwJc3F0iTpcc5dPWIyTviuYNjsThMATDBCFQ6bCxLdewAUkSMsaoVZT5N7Me_FdM7_bKg/exec',
     METHOD: 'POST'
 };
 
