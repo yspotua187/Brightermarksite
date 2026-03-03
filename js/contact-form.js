@@ -1,9 +1,11 @@
 // Brighter Mark Enterprises LLC - Contact Form Handling
-// Form validation and submission functionality with Vercel Serverless API
+// Form validation and submission functionality with Google Sheets integration
 
 // API endpoint configuration
 const API_CONFIG = {
-    ENDPOINT: '/api/send-contact',  // Vercel serverless function endpoint
+    // Google Apps Script Web App URL - Replace with your deployed script URL
+    // Example: 'https://script.google.com/macros/s/ABC123xyz/exec'
+    ENDPOINT: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
     METHOD: 'POST'
 };
 
@@ -105,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Form submission with Vercel Serverless API
+    // Form submission with Google Sheets integration
     function submitForm(form) {
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
@@ -119,48 +121,46 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const formDataObj = Object.fromEntries(formData.entries());
         
-        // Prepare API request data
-        const requestData = {
-            business_name: formDataObj['business-name'] || formDataObj['business-name'] || '',
-            contact_person: formDataObj['contact-person'] || formDataObj['contact-name'] || '',
-            phone: formDataObj.phone || '',
-            email: formDataObj.email || '',
-            service_type: formDataObj['service-type'] || '',
-            property_type: formDataObj['property-type'] || '',
-            square_footage: formDataObj['square-footage'] || '',
-            frequency: formDataObj.frequency || '',
-            message: formDataObj.message || '',
-            page_url: window.location.href
-        };
+        // Prepare data for Google Sheets
+        // Google Apps Script expects URL-encoded parameters or form data
+        const params = new URLSearchParams();
+        params.append('timestamp', new Date().toISOString());
+        params.append('business_name', formDataObj['business-name'] || formDataObj['business-name'] || '');
+        params.append('contact_person', formDataObj['contact-person'] || formDataObj['contact-name'] || '');
+        params.append('phone', formDataObj.phone || '');
+        params.append('email', formDataObj.email || '');
+        params.append('service_type', formDataObj['service-type'] || '');
+        params.append('property_type', formDataObj['property-type'] || '');
+        params.append('square_footage', formDataObj['square-footage'] || '');
+        params.append('frequency', formDataObj.frequency || '');
+        params.append('message', formDataObj.message || '');
+        params.append('page_url', window.location.href);
+        params.append('source', 'brighter-mark-website');
         
-        // Send data to serverless API
+        // Send data to Google Apps Script
+        // Note: Google Apps Script has CORS restrictions, so we use mode: 'no-cors' for simple requests
+        // or handle the redirect that Google Apps Script returns
         fetch(API_CONFIG.ENDPOINT, {
             method: API_CONFIG.METHOD,
+            mode: 'no-cors', // Required for Google Apps Script to avoid CORS errors
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify(requestData)
+            body: params.toString()
         })
-        .then(async function(response) {
-            const data = await response.json();
+        .then(function() {
+            // With 'no-cors' mode, we can't read the response, but we assume success
+            // Show success message
+            showFormMessage(form, 'Thank you! Your information has been submitted successfully. We will contact you soon.', 'success');
             
-            if (response.ok) {
-                // Show success message
-                showFormMessage(form, 'Thank you! Your message has been sent successfully. We will contact you soon.', 'success');
-                
-                // Reset form
-                form.reset();
-            } else {
-                // Show error message from API
-                const errorMsg = data.error || 'Sorry, there was an error sending your message.';
-                showFormMessage(form, `${errorMsg} Please try again or call us directly at (501) 712-0802.`, 'error');
-            }
+            // Reset form
+            form.reset();
         })
         .catch(function(error) {
-            console.error('Failed to submit form:', error);
+            console.error('Failed to submit form to Google Sheets:', error);
             
             // Show error message
-            showFormMessage(form, 'Sorry, there was an error sending your message. Please try again or call us directly at (501) 712-0802.', 'error');
+            showFormMessage(form, 'Sorry, there was an error submitting your information. Please try again or call us directly at (501) 712-0802.', 'error');
         })
         .finally(function() {
             // Restore button
