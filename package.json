@@ -1,0 +1,30 @@
+{
+  "name": "brightermark-site",
+  "version": "1.0.0",
+  "description": "Brighter Mark Enterprises LLC website with serverless contact forms",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel start",
+    "deploy": "vercel deploy --prod"
+  },
+  "keywords": [
+    "commercial-cleaning",
+    "arkansas",
+    "business",
+    "website"
+  ],
+  "author": "Brighter Mark Enterprises LLC",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.x"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "nodemailer": "^6.9.7",
+    "resend": "^3.1.0"
+  },
+  "devDependencies": {
+    "vercel": "^34.0.0"
+  }
+}

@@ -1,40 +1,13 @@
 // Brighter Mark Enterprises LLC - Contact Form Handling
-// Form validation and submission functionality with EmailJS integration
+// Form validation and submission functionality with Vercel Serverless API
 
-// EmailJS Configuration - REPLACE WITH YOUR ACTUAL CREDENTIALS
-const EMAILJS_CONFIG = {
-    SERVICE_ID: 'YOUR_EMAILJS_SERVICE_ID',      // Replace with your EmailJS service ID
-    TEMPLATE_ID: 'YOUR_EMAILJS_TEMPLATE_ID',    // Replace with your EmailJS template ID
-    USER_ID: 'YOUR_EMAILJS_USER_ID',            // Replace with your EmailJS user ID (public key)
-    TO_EMAIL: 'contracts@brightermarkar.com'    // Destination email address
+// API endpoint configuration
+const API_CONFIG = {
+    ENDPOINT: '/api/send-contact',  // Vercel serverless function endpoint
+    METHOD: 'POST'
 };
 
-// Load EmailJS SDK dynamically if not already loaded
-function loadEmailJSSDK() {
-    return new Promise((resolve, reject) => {
-        if (typeof emailjs !== 'undefined') {
-            resolve();
-            return;
-        }
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-        script.onload = () => {
-            // Initialize EmailJS with user ID
-            emailjs.init(EMAILJS_CONFIG.USER_ID);
-            resolve();
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Load EmailJS SDK
-    loadEmailJSSDK().catch(error => {
-        console.error('Failed to load EmailJS SDK:', error);
-    });
-    
     // Contact form handling
     const contactForms = document.querySelectorAll('form[id$="contact-form"]');
     
@@ -132,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Form submission with EmailJS
+    // Form submission with Vercel Serverless API
     function submitForm(form) {
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
@@ -146,48 +119,50 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
         const formDataObj = Object.fromEntries(formData.entries());
         
-        // Prepare email template parameters
-        const templateParams = {
-            to_email: EMAILJS_CONFIG.TO_EMAIL,
-            from_name: formDataObj['contact-person'] || formDataObj['contact-name'] || 'Website Visitor',
-            from_email: formDataObj.email || 'No email provided',
-            business_name: formDataObj['business-name'] || formDataObj['business-name'] || 'Not specified',
-            phone: formDataObj.phone || 'Not provided',
-            service_type: formDataObj['service-type'] || 'Not specified',
-            property_type: formDataObj['property-type'] || 'Not specified',
-            square_footage: formDataObj['square-footage'] || 'Not specified',
-            frequency: formDataObj.frequency || 'Not specified',
-            message: formDataObj.message || 'No message provided',
-            submitted_at: new Date().toLocaleString(),
+        // Prepare API request data
+        const requestData = {
+            business_name: formDataObj['business-name'] || formDataObj['business-name'] || '',
+            contact_person: formDataObj['contact-person'] || formDataObj['contact-name'] || '',
+            phone: formDataObj.phone || '',
+            email: formDataObj.email || '',
+            service_type: formDataObj['service-type'] || '',
+            property_type: formDataObj['property-type'] || '',
+            square_footage: formDataObj['square-footage'] || '',
+            frequency: formDataObj.frequency || '',
+            message: formDataObj.message || '',
             page_url: window.location.href
         };
         
-        // Send email using EmailJS
-        emailjs.send(
-            EMAILJS_CONFIG.SERVICE_ID,
-            EMAILJS_CONFIG.TEMPLATE_ID,
-            templateParams
-        )
-        .then(function(response) {
-            console.log('Email sent successfully!', response.status, response.text);
+        // Send data to serverless API
+        fetch(API_CONFIG.ENDPOINT, {
+            method: API_CONFIG.METHOD,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(async function(response) {
+            const data = await response.json();
             
-            // Show success message
-            showFormMessage(form, 'Thank you! Your message has been sent successfully. We will contact you soon.', 'success');
-            
-            // Reset form
-            form.reset();
-            
-            // Restore button
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-            submitButton.classList.remove('loading');
+            if (response.ok) {
+                // Show success message
+                showFormMessage(form, 'Thank you! Your message has been sent successfully. We will contact you soon.', 'success');
+                
+                // Reset form
+                form.reset();
+            } else {
+                // Show error message from API
+                const errorMsg = data.error || 'Sorry, there was an error sending your message.';
+                showFormMessage(form, `${errorMsg} Please try again or call us directly at (501) 712-0802.`, 'error');
+            }
         })
         .catch(function(error) {
-            console.error('Failed to send email:', error);
+            console.error('Failed to submit form:', error);
             
             // Show error message
             showFormMessage(form, 'Sorry, there was an error sending your message. Please try again or call us directly at (501) 712-0802.', 'error');
-            
+        })
+        .finally(function() {
             // Restore button
             submitButton.disabled = false;
             submitButton.textContent = originalText;
