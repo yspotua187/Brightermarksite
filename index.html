@@ -207,22 +207,22 @@
                 <form id="quick-contact-form">
                     <div class="form-group">
                         <label for="business-name" class="form-label">Business Name</label>
-                        <input type="text" id="business-name" class="form-input" required>
+                        <input type="text" id="business-name" name="business-name" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="contact-name" class="form-label">Contact Person</label>
-                        <input type="text" id="contact-name" class="form-input" required>
+                        <input type="text" id="contact-name" name="contact-name" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" id="phone" class="form-input" required>
+                        <input type="tel" id="phone" name="phone" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="service-type" class="form-label">Service Type</label>
-                        <select id="service-type" class="form-select" required>
+                        <select id="service-type" name="service-type" class="form-select" required>
                             <option value="">Select a Service</option>
                             <option value="office-cleaning">Office Cleaning</option>
                             <option value="medical-cleaning">Medical Facility Cleaning</option>
@@ -236,7 +236,7 @@
                     
                     <div class="form-group">
                         <label for="message" class="form-label">Message</label>
-                        <textarea id="message" class="form-textarea" placeholder="Tell us about your cleaning needs..."></textarea>
+                        <textarea id="message" name="message" class="form-textarea" placeholder="Tell us about your cleaning needs..."></textarea>
                     </div>
                     
                     <button type="submit" class="btn btn-primary" style="width: 100%;">

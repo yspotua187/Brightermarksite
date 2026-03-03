@@ -1,7 +1,40 @@
 // Brighter Mark Enterprises LLC - Contact Form Handling
-// Form validation and submission functionality
+// Form validation and submission functionality with EmailJS integration
+
+// EmailJS Configuration - REPLACE WITH YOUR ACTUAL CREDENTIALS
+const EMAILJS_CONFIG = {
+    SERVICE_ID: 'YOUR_EMAILJS_SERVICE_ID',      // Replace with your EmailJS service ID
+    TEMPLATE_ID: 'YOUR_EMAILJS_TEMPLATE_ID',    // Replace with your EmailJS template ID
+    USER_ID: 'YOUR_EMAILJS_USER_ID',            // Replace with your EmailJS user ID (public key)
+    TO_EMAIL: 'contracts@brightermarkar.com'    // Destination email address
+};
+
+// Load EmailJS SDK dynamically if not already loaded
+function loadEmailJSSDK() {
+    return new Promise((resolve, reject) => {
+        if (typeof emailjs !== 'undefined') {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+        script.onload = () => {
+            // Initialize EmailJS with user ID
+            emailjs.init(EMAILJS_CONFIG.USER_ID);
+            resolve();
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Load EmailJS SDK
+    loadEmailJSSDK().catch(error => {
+        console.error('Failed to load EmailJS SDK:', error);
+    });
+    
     // Contact form handling
     const contactForms = document.querySelectorAll('form[id$="contact-form"]');
     
@@ -99,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Form submission
+    // Form submission with EmailJS
     function submitForm(form) {
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = submitButton.textContent;
@@ -111,12 +144,32 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Collect form data
         const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+        const formDataObj = Object.fromEntries(formData.entries());
         
-        // Simulate form submission (replace with actual API call)
-        setTimeout(() => {
-            // In a real implementation, you would send this to your server
-            console.log('Form submitted with data:', data);
+        // Prepare email template parameters
+        const templateParams = {
+            to_email: EMAILJS_CONFIG.TO_EMAIL,
+            from_name: formDataObj['contact-person'] || formDataObj['contact-name'] || 'Website Visitor',
+            from_email: formDataObj.email || 'No email provided',
+            business_name: formDataObj['business-name'] || formDataObj['business-name'] || 'Not specified',
+            phone: formDataObj.phone || 'Not provided',
+            service_type: formDataObj['service-type'] || 'Not specified',
+            property_type: formDataObj['property-type'] || 'Not specified',
+            square_footage: formDataObj['square-footage'] || 'Not specified',
+            frequency: formDataObj.frequency || 'Not specified',
+            message: formDataObj.message || 'No message provided',
+            submitted_at: new Date().toLocaleString(),
+            page_url: window.location.href
+        };
+        
+        // Send email using EmailJS
+        emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            EMAILJS_CONFIG.TEMPLATE_ID,
+            templateParams
+        )
+        .then(function(response) {
+            console.log('Email sent successfully!', response.status, response.text);
             
             // Show success message
             showFormMessage(form, 'Thank you! Your message has been sent successfully. We will contact you soon.', 'success');
@@ -128,8 +181,18 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.disabled = false;
             submitButton.textContent = originalText;
             submitButton.classList.remove('loading');
+        })
+        .catch(function(error) {
+            console.error('Failed to send email:', error);
             
-        }, 2000);
+            // Show error message
+            showFormMessage(form, 'Sorry, there was an error sending your message. Please try again or call us directly at (501) 712-0802.', 'error');
+            
+            // Restore button
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+            submitButton.classList.remove('loading');
+        });
     }
     
     function showFormMessage(form, message, type) {
